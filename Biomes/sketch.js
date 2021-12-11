@@ -1,18 +1,9 @@
-
-var img;
-var img2;
-var img3;
-var img4;
-var img5;
-var img6;
-var img7;
-var img8;
-
 //List of arrays:
 var carnivores = [];
 var vehicles = [];
 var food = [];
 var foodSuper = [];
+var foodJungle = [];
 var debug;
 
 //River variables:
@@ -34,16 +25,17 @@ function setup() {
   frameRate(60);
   img=loadImage("Png til skole/Stem3.png.png");
   img2=loadImage("Png til skole/Carnivore2.png.png");
-  img3=loadImage("Png til skole/perceptionbug.png.png");
-  img4=loadImage("Png til skole/poisonperceptionbug.png.png");
-  img5=loadImage("Png til skole/ultimateperceptionbug.png.png");
-  img6=loadImage("Png til skole/Bigboi.png.png");
-  img7=loadImage("Png til skole/WaterBug.png.png");
-  img8=loadImage("Png til skole/Jungle.png.png")
+  // img3=loadImage("Png til skole/perceptionbug.png.png");
+  // img4=loadImage("Png til skole/poisonperceptionbug.png.png");
+  // img5=loadImage("Png til skole/ultimateperceptionbug.png.png");
+  // img6=loadImage("Png til skole/Bigboi.png.png");
+  // img7=loadImage("Png til skole/WaterBug.png.png");
+  // img8=loadImage("Png til skole/Jungle.png.png");
+  // img9=loadImage("Png til skole/FlyingBug.png");
 
   //Initial vehicle spawner:
-  for (var i = 0; i < 40; i++) {
-    var x = random(riverR, mountL);
+  for (var i = 0; i < 60; i++) {
+    var x = random(0, mapWidth);
     var y = random(height);
     vehicles[i] = new Vehicle(x, y);
   }
@@ -56,26 +48,26 @@ function setup() {
   }
 
   // CENTER MAP FOOD - Grasslands - Normal food:
-  var foodGrassMax = 40;
-  for (var i = 0; i < foodGrassMax; i++) {
-    var x = random(riverR+25, mountL-25);
-    var y = random(height-25, 25);
-    food.push(createVector(x, y));
-  }
+  // var foodGrassMax = 40;
+  // for (var i = 0; i < foodGrassMax; i++) {
+  //   var x = random(riverR+25, mountL-25);
+  //   var y = random(height-25, 25);
+  //   food.push(createVector(x, y));
+  // }
   // RIGHT MAP FOOD - Mountains - (less) Super food:
-  var foodMountMax = 10;
+  var foodMountMax = 12;
   for (var i = 0; i < foodMountMax; i++) {
     var x = random(mountR+25, width-25);
     var y = random(height-25, 25);
     foodSuper.push(createVector(x, y));
   }
   // LEFT MAP FOOD - Jungles - (High concentration of food) Normal food):
-  var foodJungleMax = 50;
-  for (var i = 0; i < foodJungleMax; i++) {
-    var x = random(25, riverL);
-    var y = random(height-25, 25);
-    food.push(createVector(x, y));
-  }
+  // var foodJungleMax = 50;
+  // for (var i = 0; i < foodJungleMax; i++) {
+  //   var x = random(25, riverL);
+  //   var y = random(height-25, 25);
+  //   food.push(createVector(x, y));
+  // }
   debug = createCheckbox(); //
 }
 
@@ -83,28 +75,28 @@ function mouseDragged() { //Testing vehicles by clicking mouse
   vehicles.push(new Vehicle(mouseX, mouseY));
 }
 
-/*function mouseDragged() {
-  //Testing vehicles by clicking mouse
-  carnivores.push(new Carnivore(mouseX, mouseY));
-}*/
+// function mouseDragged() {
+//   //Testing vehicles by clicking mouse
+//   carnivores.push(new Carnivore(mouseX, mouseY));
+// }
 
 function draw() {
   background(51);
 //left higher river:
   fill(3, 78, 252);
-  rect(riverL, -25, riverWidth, height/2);
+  rect(riverL, -100, riverWidth, height/2);
 
 //Left lower river:
   fill(3, 78, 252);
-  rect(riverL, 575, riverWidth, height/2);
+  rect(riverL, 700, riverWidth, height/2);
 
 //Right higher mountain
   fill(156, 104, 26);
-  rect(mountL, -25, mountWidth, height/2);
+  rect(mountL, -100, mountWidth, height/2);
 
 //Right lower mountain:
   fill(156, 104, 26);
-  rect(mountL, 575, mountWidth, height/2);
+  rect(mountL, 700, mountWidth, height/2);
 
   for (i = 0; i < vehicles.length; i++){
       textSize(32);
@@ -119,25 +111,40 @@ function draw() {
     }
 
   //Food growth - Jungles! (High spawn rate of normal food):
-  if(food.length < 90*10) {
-    if (random(1) < 0.4) {
+    if (random(1) < 0.4 && foodJungle.length < 60*4) {
       var x = random(25, riverL-25);
       var y = random(height-25, 25);
-      food.push(createVector(x, y));
+      foodJungle.push(createVector(x, y));
     }
 
     //Food growth - Grasslands! (normal):
-    if (random(1) < 0.4) {
+    if (random(1) < 0.4 && food.length < 60*6) {
       var x = random(riverR+25, mountL-25);
       var y = random(height-25, 25);
       food.push(createVector(x, y));
     }
-  }
+
   //Food growth - Mountains! (Low spawn rate of super food):
-    if (random(10) < 0.1 && foodSuper.length < 10*3) {
+    if (random(1) < 0.1 && foodSuper.length < 10*6) {
       var x = random(mountR+25, mapWidth-25);
       var y = random(height-25, 25);
       foodSuper.push(createVector(x, y));
+      if (random(10) < 0.5) {
+        var x = random(mountR-25, mountL-25);
+        var y = random(500, 700);
+        foodSuper.push(createVector(x, y));
+        food.push(createVector(x, y));
+        var x = random(riverR + 25, riverL + 25);
+        var y = random(500, 700);
+        foodJungle.push(createVector(x, y));
+        food.push(createVector(x, y));
+      }
+    }
+    //Predator from the jungle, prowls when enough creatures are present.
+    if (random(1000) < 1 && vehicles.length > 50) {
+      var x = random(25, riverL);
+      var y = random(height);
+      carnivores[i] = new Carnivore(x, y);
     }
   //Food visuals:
   for (var i = 0; i < food.length; i++) {
@@ -151,13 +158,18 @@ function draw() {
     noStroke();
     ellipse(foodSuper[i].x, foodSuper[i].y, 6, 6);
   }
+  //Jungle food visuals:
+  for (var i = 0; i < foodJungle.length; i++) {
+    fill(255, 255, 0);
+    noStroke();
+    ellipse(foodJungle[i].x, foodJungle[i].y, 4, 4);
+  }
 
   for (var i = vehicles.length - 1; i >= 0; i--) {
     vehicles[i].boundaries();
-    vehicles[i].behaviors(food, foodSuper);
+    vehicles[i].behaviors(food, foodSuper, foodJungle);
     vehicles[i].update(); //Updates position of Vehicle
     vehicles[i].display(); // Visuals for Vehicle
-    //vehicles[i].flee(target);
     var newVehicle = vehicles[i].clone();
     if (newVehicle != null) {
       vehicles.push(newVehicle);

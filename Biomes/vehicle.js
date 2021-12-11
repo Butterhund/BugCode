@@ -1,5 +1,13 @@
-var mr = 0.1;
+var mr = 1;
 var speedBugCounter = 0;
+var img;
+var img2;
+var img3;
+var img4;
+var img5;
+var img6;
+var img7;
+var img8;
 
 class Vehicle {
   constructor(x, y, dna){
@@ -8,30 +16,30 @@ class Vehicle {
     this.position = createVector(x, y);
     this.r = 4;
     this.maxspeed = 1.5;
-    this.maxforce = 0.3;
-    this.size =20;
+    this.maxforce = 0.2;
+    this.size = 20;
     this.health = 50;
+    this.maxhealth;
     this.digestion = 1;
+    this.img;
     //DNA's the creature will start with:
     this.dna = [];
+
     if (dna === undefined) {
       // Food weight
-      this.dna[0] = random(-2, 2);
-      // Super food weight
-      this.dna[1] = random(-2, 2);
-      // Food perception
-      this.dna[2] = random(0, 100);
-      // Super food Percepton
-      this.dna[3] = random(0, 100);
-      // Digestion modifier:
+      this.dna[0] = random(0, 2);
+      // // Second food weight
+      // this.dna[1] = random(-2, 2);
+      // Food perception <-> reproduction cost
+      this.dna[2] = 1;
+      // // Second food Percepton
+      // this.dna[3] = random(0, 100);
+      // Speed <-> Digestion:
       this.dna[4] = random(0.75, 1.25);
-      //   vehicles.push(new Vehicle(x, y));
-      // }
-      // this.dna[4] = random(1, 10);
-      // //health
-      // this.dna[5] = random(0.2,0.8);
-      // //size
-      // this.dna[6] = random(0,100);
+      // Health <-> handling:
+      this.dna[5] = random(0.75, 1.25);
+      // Carnivores HUNT DNA: Speed <-> Vision
+      this.dna[6] = random(0.5, 1.5);
     } else {
       // Mutation
       this.dna[0] = dna[0];
@@ -44,30 +52,40 @@ class Vehicle {
       }
       this.dna[2] = dna[2];
       if (random(1) < mr) {
-        this.dna[2] += random(-10, 10);
+        this.dna[2] *= random(0.75, 1.25);
       }
       this.dna[3] = dna[3];
       if (random(1) < mr) {
         this.dna[3] += random(-10, 10);
       }
       //Mutating in the direction of either maxspeed or energyDrain!
-      //Lower DNA = less speed, but less digestion!
+      //Lower DNA = less speed, but less health-loss.!
       this.dna[4] = dna[4];
       if (random(1) < mr) {
-        this.dna[4] += random(-0.1, 0.1);
+        this.dna[4] *= random(0.75, 1.25);
       }
-      // MaximumSpeed <----> Digestion
-      // if(random(2) < 1) {
-      //   this.maxspeed += 0.1;
-      //   this.digestion -= 0.1;
-      // } else {
-      //   this.maxspeed -= 0.1;
-      //   this.digestion += 0.1;
-      // +}
+      //Mutating in the direction of either health or handling(maxforce)!
+      this.dna[5] = dna[5];
+      if (random(1) < mr) {
+        this.dna[5] *= random(0.95, 1.05);
+      }
+      //Carnivore Hunt mutation:
+      this.dna[6] = dna[6];
+      if (random(1) < mr) {
+        this.dna[6] *= random(0.50, 1.50);
+      }
     }
-    //DNA's modifies the values based on DNA inside the constructor.
-    this.maxspeed = this.maxspeed * this.dna[4];
-    this.digestion = this.digestion * this.dna[4];
+  //DNA's modifies the values based on DNA inside the constructor.
+    // Speed <-> digestion:
+    this.maxspeed = (this.maxspeed * this.dna[4]);
+    this.digestion = (this.digestion * this.dna[4])*1,5;
+    // Health <-> Handling:
+    this.maxhealth = 100 * this.dna[5];
+    this.health = (this.maxhealth / 2);
+    this.maxforce = this.maxforce / this.dna[5];
+    // image assignment:
+    this.img = img;
+    this.img.resize(this.size, this.size);
   }
 
   // Method to update location
@@ -87,20 +105,23 @@ class Vehicle {
     this.acceleration.add(force);
   };
 
-  behaviors(good, bad) {// This controls towards poison/food
-    var steerG = this.eat(good, 20, this.dna[2]); // 20 = energy from food.
-    var steerB = this.eat(bad, 100, this.dna[3]); // 100 = energy from super food.
+  behaviors(good, bad, jungle) {// This controls towards poison/food
+    var steerG = this.eat(good, 20, 50 * this.dna[2]); // 20 = energy from food. This dna[2]=(0-100);
+    var steerB = this.eat(bad, 100, 50 / this.dna[2]); // 100 = energy from super food. // this.dna[2] changed from this.dna[3].
+    var steerJ = this.eat(jungle, 20, 50 * (this.dna[2]*2));
 
     steerG.mult(this.dna[0]);
-    steerB.mult(this.dna[1]);
+    steerB.mult(this.dna[0]); // this dna[0] changed from this dna[1].
+    steerJ.mult(this.dna[0]);
 
     this.applyForce(steerG);
     this.applyForce(steerB);
+    this.applyForce(steerJ);
   };
 
   clone() { //Reproduction of vehicle. Adopt Pos and DNA
-    if (this.health > 99) {
-      this.health = 50;
+    if (this.health > (this.maxhealth)) {
+      this.health = this.maxhealth/1.5;
       return new Vehicle(this.position.x-25, this.position.y,   this.dna);
 
     } else {
@@ -159,46 +180,26 @@ class Vehicle {
     rotate(angle);
 
     if (debug.checked()) {
-      strokeWeight(3);
-      stroke(0, 255, 0);
-      noFill();
-    //  line(0, 0, 0, -this.dna[0] * 25); //dna[4] was dna[0].
-      strokeWeight(2);
-    //  ellipse(0, 0, this.dna[2] * 2);
-      stroke(255, 0, 0);
-    //  line(0, 0, 0, -this.dna[1] * 25); //dna[4] was dna[1].
-      //ellipse(0, 0, this.dna[3] * 2);
-      stroke(0, 0, 255);
-      ellipse(0, 0, this.dna[4] * 100);
+    //   strokeWeight(3);
+    //   stroke(0, 255, 0);
+    //   noFill();
+    // //  line(0, 0, 0, -this.dna[0] * 25); //dna[4] was dna[0].
+    //   strokeWeight(2);
+    //   //Green test ring:
+    //   //ellipse(0, 0, this.health * 2);
+    //   stroke(255, 0, 0);
+    //   line(0, 0, 0, - this.dna[4] * 25); //dna[4] was dna[1].
+    //   //Red test ring:
+    //   ellipse(0, 0, 100/this.dna[2]);
+    //   stroke(0, 0, 255);
+    //   //Blue test ring:
+    //   ellipse(0, 0, this.dna[2] * 100);
+      // textSize(4*5);
+    //  text(this.size, 5, 5);
+      // fill(252, 3, 3);
     }
-
-    var gr = color(0, 255, 0);
-    var rd = color(255, 0, 0);
-    var col = lerpColor(rd, gr, this.health);
     imageMode(CENTER);
-    image(img,0,0);
-    img.resize(this.size, this.size);
-
-
-    // if(this.dna[2] > 90){ //Turn into perceptionbug if perception excedes 90
-    //   imageMode(CENTER);
-    //   image(img3,0,0);
-    //   img3.resize(this.size, this.size);
-    // }
-
-
-
-
-
-  /*  fill(col);
-    stroke(col);
-    strokeWeight(1);
-    beginShape();
-    vertex(0, -this.r * 2);
-    vertex(-this.r, this.r * 2);
-    vertex(this.r, this.r * 2);
-    endShape(CLOSE);*/
-
+    image(this.img, 0, 0);
     pop();
   };
   // biomes() {
@@ -220,7 +221,7 @@ class Vehicle {
       desired = createVector(this.velocity.x, -this.maxspeed);
     }
     // Exception of boundaries while creatures are on "the path" to other biomes.
-    if(this.position.y < 525 || this.position.y > 575) {
+    if(this.position.y < 450 || this.position.y > 700) {
 
     // River boundaries START:
     if (this.position.x < riverR && this.position.x > riverM) {
