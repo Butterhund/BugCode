@@ -8,7 +8,6 @@ class Carnivore extends Vehicle{
     this.maxspeed = 2;
     this.size = 40;
     this.health = 200;
-    this.race = 2;
 
     //Predator DNA:
       if (dna === undefined) {
@@ -25,9 +24,9 @@ class Carnivore extends Vehicle{
       this.img = imgStalker;
       this.size = 45;
     }
-    if (this.dna[6] < 0.5) {
+    if (this.dna[6] < 0.75) {
       this.img = imgCrawler;
-      this.size = 70;
+      this.size = 60;
     }
   }
   //Method to update Carnivore location
@@ -57,7 +56,14 @@ class Carnivore extends Vehicle{
     this.applyForce(steerG);
     //this.applyForce(steerB);
   };
-
+  layEgg() {
+    if(this.health > 1000) {
+      this.health = 200;
+      eggs.push(new Egg(this.position.x, this.position.y, this.dna));
+    } else {
+      return null;
+    }
+  }
   clone() { //Reproduction of vehicle. Adopt Pos and DNA
     if (this.health > 1000) {
       this.health = 200;

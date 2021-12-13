@@ -21,8 +21,9 @@ var mountM = mountL + (mountWidth/2)
 var mapWidth = 2400;
 var mapHeight = 1100;
 function preload(){
+
   imgStem=loadImage("Png til skole/Stem3.png.png");
-  imgCarnivore=loadImage("Png til skole/Carnivore2.png.png");
+  imgCarnivore=loadImage("Png til skole/Carnivore.png.png");
   imgCrawler=loadImage("Png til skole/Crawler.png");
   imgStalker=loadImage("Png til skole/Stalker.png");
   imgDweller=loadImage("Png til skole/Dweller.png");
@@ -32,9 +33,13 @@ function preload(){
   imgDwellerSand=loadImage("Png til skole/SandDweller.png");
   imgNomadSand=loadImage("Png til skole/SandNomad.png");
   imgFlySand=loadImage("Png til skole/SandFly.png");
-
-
-
+  // EGG-pngs:
+  imgEggStem = loadImage("Png til skole/EggStem.png");
+  imgEggSand = loadImage("Png til skole/EggSand.png");
+  imgEggGrass = loadImage("Png til skole/EggGrass.png");
+  imgEggCarnivore = loadImage("Png til skole/EggCarnivore.png");
+  imgEggStalker = loadImage("Png til skole/EggStalker.png");
+  imgEggCrawler = loadImage("Png til skole/EggCrawler.png");
 };
 
 function setup() {
@@ -43,7 +48,7 @@ function setup() {
 
 
   //Initial vehicle spawner:
-  for (var i = 0; i < 60; i++) {
+  for (var i = 0; i < 45; i++) {
     var x = random(0, mapWidth);
     var y = random(height);
     vehicles[i] = new Vehicle(x, y);
@@ -169,31 +174,31 @@ function draw() {
         food.push(createVector(x, y));
       }
     }
-    //Predator from the jungle, prowls when enough creatures are present.
-    if (random(1000) < 1 && vehicles.length > 130) {
-        var x = random(25, riverL);
-        var y = random(height);
+    //Predator from the jungle, prowls when enough vehicles are alive.
+    if (random(500) < 1 && vehicles.length > 50) {
+        var x = 80;               // lair position X
+        var y = (mapHeight/2)+60; // lair position Y
         carnivores[i] = new Carnivore(x, y);
     }
-
-
   //Food visuals:
   for (var i = 0; i < food.length; i++) {
-    fill(255, 0, 0);
-    noStroke();
+    fill(0, 200, 0);
+    stroke(0,0,0);
+    strokeWeight(2);
     ellipse(food[i].x, food[i].y, 8, 8);
   }
   // Super food visuals:
   for (var i = 0; i < foodSuper.length; i++) {
     fill(0, 0, 0);
     stroke(0,0,0);
-    strokeWeight(3);
-    ellipse(foodSuper[i].x, foodSuper[i].y, 8, 8);
+    strokeWeight(2);
+    ellipse(foodSuper[i].x, foodSuper[i].y, 6, 6);
   }
   //Jungle food visuals:
   for (var i = 0; i < foodJungle.length; i++) {
-    fill(255, 0, 0);
-    noStroke();
+    fill(0, 200, 0);
+    stroke(0,0,0);
+    strokeWeight(2);
     ellipse(foodJungle[i].x, foodJungle[i].y, 8, 8);
   }
   for (var i = eggs.length - 1; i >= 0; i--) {
@@ -212,10 +217,6 @@ function draw() {
     vehicles[i].update(); //Updates position of Vehicle
     vehicles[i].display(); // Visuals for Vehicle
     vehicles[i].layEgg();
-    //var newVehicle = vehicles[i].clone();
-    // if (newVehicle != null) {
-    //   vehicles.push(newVehicle);
-    // }
 
     if (vehicles[i].dead()) {
       var x = vehicles[i].position.x;
@@ -227,24 +228,20 @@ function draw() {
 
   for (var i = carnivores.length - 1; i >= 0; i--) {
     carnivores[i].boundaries();
-    //carnivores[i].behaviors(food, poison);
-    //instead use the list of vehicles
+    carnivores[i].layEgg();
     carnivores[i].behaviors(vehicles);
     carnivores[i].update(); //Updates position of Vehicle
     carnivores[i].display(); // Visuals for Vehicle
 
-    var newCarnivore = carnivores[i].clone();
-    if (newCarnivore != null) {
-      carnivores.push(newCarnivore);
-    }
+    // var newCarnivore = carnivores[i].clone();
+    // if (newCarnivore != null) {
+    //   carnivores.push(newCarnivore);
+    // }
 
     if (carnivores[i].dead()) {
       var x = carnivores[i].position.x;
       var y = carnivores[i].position.y;
       carnivores.splice(i, 1);
-      // if(random(100) < 50) {
-      //   vehicles.push(new Vehicle(x, y));
-      // }
     }
   }
 

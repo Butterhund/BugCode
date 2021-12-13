@@ -20,11 +20,11 @@ class Vehicle {
     this.maxspeed = 1.5;
     this.maxforce = 0.2;
     this.size = 20;
+    this.eggSize = 10;
     this.health = 50;
     this.maxhealth;
     this.digestion = 1;
     this.img = imgStem;
-    this.race = 1;
     //DNA's the creature will start with:
     this.dna = [];
 
@@ -89,6 +89,7 @@ class Vehicle {
     // image assignment:
     if(this.dna[2] <= 0.5) {
       this.img = imgDwellerSand;
+
       if(this.maxspeed > 3) {
         this.img = imgFlySand;
         this.size = 25;
@@ -105,10 +106,10 @@ class Vehicle {
           this.img = imgFly;
           this.size = 25;
       }
-    if (this.dna[2] >= 0.3 && this.maxspeed < 3) {
-      this.img = imgNomad
+    if (this.dna[2] >= 1.7 && this.maxspeed < 3) {
+      this.img = imgNomad;
       this.size = 35;
-    }
+      }
     }
     this.img.resize(this.size, this.size);
 
