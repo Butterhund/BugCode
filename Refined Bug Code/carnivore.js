@@ -1,7 +1,6 @@
-
 class Carnivore extends Vehicle{
 
-  constructor(x, y, dna){
+  constructor(x, y, dna) {
     super(x,y,dna);
     this.prey = new Vehicle();
     this.img = imgCarnivore; //should make it like this. Not global.
@@ -19,16 +18,36 @@ class Carnivore extends Vehicle{
         }
     }
     this.maxspeed = (this.maxspeed * this.dna[6]);
-    //Image assignment:
+
+    //Image assignment, based on DNA:
     if (this.dna[6] > 1.5) {
       this.img = imgStalker;
       this.size = 45;
     }
+
     if (this.dna[6] < 0.75) {
       this.img = imgCrawler;
       this.size = 60;
     }
-  }
+  };
+
+
+  getTypeCarnivore() {
+    if (this.dna[6] > 1.5) {
+      return "stalker"
+
+    }
+
+    if(this.dna[6]<0.75 && this.dna[6]>0.50){
+      return "crawler"
+    }
+
+    if(this.dna[6]<1.5 && this.dna[6]>0.75){
+      return "regular"
+    }
+
+  };
+
   //Method to update Carnivore location
   update() {
     this.health -= this.maxhealth * 0.005;
@@ -45,17 +64,14 @@ class Carnivore extends Vehicle{
     return this.health < 0;
   };
 
-  //not handlling poison for now
-  behaviors(good) {// This controls towards poison/food
+
+  behaviors(good) {
     var steerG = this.eat(good, 200, 200/this.dna[6]);
-    //var steerB = this.eat(bad, -1, this.dna[3]);
-
     steerG.mult(this.dna[0]);
-    //steerB.mult(this.dna[1]);
-
     this.applyForce(steerG);
-    //this.applyForce(steerB);
+
   };
+
   layEgg() {
     if(this.health > 1000) {
       this.health = 200;
@@ -64,7 +80,8 @@ class Carnivore extends Vehicle{
       return null;
     }
   }
-  clone() { //Reproduction of vehicle. Adopt Pos and DNA
+
+  clone() {
     if (this.health > 1000) {
       this.health = 200;
       return new Carnivore(this.position.x-25, this.position.y,   this.dna);
@@ -80,7 +97,6 @@ class Carnivore extends Vehicle{
     for (var i = preyList.length - 1; i >= 0; i--) {
       var d = this.position.dist(preyList[i].position);
       if (d < this.maxspeed) {
-        //eat!
         preyList.splice(i, 1);
         this.health += nutrition;
       } else {
@@ -92,7 +108,6 @@ class Carnivore extends Vehicle{
     }
 
     // This is the moment of eating!
-
     if (closest != null) {
       return this.seek(closest);
     }
@@ -106,32 +121,34 @@ class Carnivore extends Vehicle{
     // Steering = Desired minus velocity
     var steer = p5.Vector.sub(desired, this.velocity);
     steer.limit(this.maxforce); // Limit to maximum steering force
-  //  steer.mult(-1);// REVERSE THE HUNT! AKA: FLEE!
+  //  steer.mult(-1);// Reverse seeking to fleeing.
     return steer;
-    //this.applyForce(steer);
   }
-  // avoid(preyVehicle) { ASDASDASDASDASDASDASDASDASD
-  //   var desired = p5.Vector.sub
-  // }
+
 
   display() {
-    // Draw a triangle rotated in the direction of velocity
+    // Rotate in the direction of velocity
     var angle = this.velocity.heading() + PI / 2;
-
     push();
     translate(this.position.x, this.position.y);
     rotate(angle);
 
     if (debug.checked()) {
       strokeWeight(3);
-      stroke(0, 255, 0);
       noFill();
-      //line(0, 0, 0, -this.dna[0] * 25);
-      strokeWeight(2);
-      ellipse(0, 0, this.health * 0.5);
+
+      //Green test ring: ellipse(0, 0, x);
+      stroke(0, 255, 0);
+      ellipse(0, 0, 0);
+
+      //Red test ring:
       stroke(255, 0, 0);
-      line(0, 0, 0, -this.dna[1] * 25);
-      ellipse(0, 0, 400/this.dna[6]);
+      ellipse(0, 0, 0);
+
+      //Blue test ring:
+      stroke(0, 0, 255);
+      ellipse(0, 0, 0);
+
     }
 
     var gr = color(0, 255, 0);
@@ -157,7 +174,6 @@ class Carnivore extends Vehicle{
     } else if (this.position.y > height - d) {
       desired = createVector(this.velocity.x, -this.maxspeed);
     }
-    // Exception of boundaries while creatures are on "the path" to other biomes.
 
     // River boundaries START:
   if(this.position.y < 450 || this.position.y > 700) {
@@ -181,7 +197,4 @@ class Carnivore extends Vehicle{
       this.applyForce(steer);
     }
   };
-
-
-
 }
