@@ -15,27 +15,27 @@ class Egg {
     this.imgEgg = imgEggStem;
     this.eggSize = 8;
 
-    if (this.dna[6] > 0.75 && this.dna[6] < 1.5) {
+    if (this.dna[4] > 0.75 && this.dna[4] < 1.5) {
       this.imgEgg = imgEggCarnivore;
       this.eggSize = 25;
     }
 
-    if (this.dna[2] <= 0.5) {
-      this.imgEgg = imgEggGrass;
-      this.eggSize = 15;
-      }
-
-    if (this.dna[2] >= 1.5) {
+    if (this.dna[1] <= 0.5) {
       this.imgEgg = imgEggSand;
       this.eggSize = 15;
       }
 
-    if (this.dna[6] > 1.5) {
+    if (this.dna[1] >= 1.5) {
+      this.imgEgg = imgEggGrass;
+      this.eggSize = 15;
+      }
+
+    if (this.dna[4] > 1.5) {
       this.imgEgg = imgEggStalker;
       this.eggSize = 30;
     }
 
-    if (this.dna[6] < 0.75) {
+    if (this.dna[4] < 0.75) {
       this.imgEgg = imgEggCrawler;
       this.eggSize = 45;
     }
@@ -45,7 +45,7 @@ class Egg {
 
   update() {
     this.timer -= 0.5;
-    if (this.timer == 0 && this.isDead == false && this.dna[6] >= 0) {
+    if (this.timer == 0 && this.isDead == false && this.dna[4] >= 0) {
       // make a new vehicle
       carnivores.push(new Carnivore(this.x, this.y, this.dna));
       //add to vehicles array
