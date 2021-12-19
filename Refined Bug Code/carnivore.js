@@ -10,22 +10,22 @@ class Carnivore extends Vehicle{
 
     //Predator DNA:
       if (dna === undefined) {
-        this.dna[6] = random(0.5, 1.5);
+        this.dna[4] = random(0.5, 1.5);
       } else {
-        this.dna[6] = dna[6];
+        this.dna[4] = dna[4];
         if (random(1) < mr) {
-          this.dna[6] *= random(0.50, 1.50);
+          this.dna[4] *= random(0.50, 1.50);
         }
     }
-    this.maxspeed = (this.maxspeed * this.dna[6]);
+    this.maxspeed = (this.maxspeed * this.dna[4]);
 
     //Image assignment, based on DNA:
-    if (this.dna[6] > 1.5) {
+    if (this.dna[4] > 1.5) {
       this.img = imgStalker;
       this.size = 45;
     }
 
-    if (this.dna[6] < 0.75) {
+    if (this.dna[4] < 0.75) {
       this.img = imgCrawler;
       this.size = 60;
     }
@@ -33,16 +33,16 @@ class Carnivore extends Vehicle{
 
 
   getTypeCarnivore() {
-    if (this.dna[6] > 1.5) {
+    if (this.dna[4] > 1.5) {
       return "stalker"
 
     }
 
-    if(this.dna[6]<0.75 && this.dna[6]>0.50){
+    if(this.dna[4]<0.75 && this.dna[4]>0.50){
       return "crawler"
     }
 
-    if(this.dna[6]<1.5 && this.dna[6]>0.75){
+    if(this.dna[4]<1.5 && this.dna[4]>0.75){
       return "regular"
     }
 
@@ -66,7 +66,7 @@ class Carnivore extends Vehicle{
 
 
   behaviors(good) {
-    var steerG = this.eat(good, 200, 200/this.dna[6]);
+    var steerG = this.eat(good, 200, 200/this.dna[4]);
     steerG.mult(this.dna[0]);
     this.applyForce(steerG);
 
@@ -176,7 +176,7 @@ class Carnivore extends Vehicle{
     }
 
     // River boundaries START:
-  if(this.position.y < 450 || this.position.y > 700) {
+  if(this.position.y < pathUpper || this.position.y > pathLower) {
     if (this.position.x < riverR && this.position.x > riverM) {
       desired = createVector(this.maxspeed, this.velocity.y);
     } else if (this.position.x > riverL && this.position.x < riverM) {

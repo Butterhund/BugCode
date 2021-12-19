@@ -21,12 +21,12 @@ class Egg {
     }
 
     if (this.dna[2] <= 0.5) {
-      this.imgEgg = imgEggSand;
+      this.imgEgg = imgEggGrass;
       this.eggSize = 15;
       }
 
     if (this.dna[2] >= 1.5) {
-      this.imgEgg = imgEggGrass;
+      this.imgEgg = imgEggSand;
       this.eggSize = 15;
       }
 
@@ -56,7 +56,7 @@ class Egg {
       this.isDead = true;
     }
   };
-  
+
   display() {
     push();
     translate(this.x, this.y);

@@ -7,7 +7,7 @@ var foodSuper = [];
 var foodJungle = [];
 //Div.
 var debug;
-var counter=0;
+var counter = 0;
 var edge = 25;
 //River variables:
 var riverWidth = 150;
@@ -196,15 +196,15 @@ function draw() {
   image(imgMAP,0,0);
 
   for (i = 0; i < vehicles.length; i++){
-      textSize(32);
-      text("Creatures Alive: "+ vehicles.length, 10, 30);
-      fill(252, 3, 3);
+      // textSize(32);
+      // text("Creatures Alive: "+ vehicles.length, 10, 30);
+      // fill(252, 3, 3);
     }
 
   for (i = 0; i < carnivores.length; i++){
-      textSize(32);
-      text("Carnivores Alive: "+ carnivores.length, 10, 60);
-      fill(252, 3, 3);
+      // textSize(32);
+      // text("Carnivores Alive: "+ carnivores.length, 10, 60);
+      // fill(252, 3, 3);
     }
 
   //Food growth - Jungles! (High spawn rate of normal food):

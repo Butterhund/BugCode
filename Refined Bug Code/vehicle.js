@@ -33,11 +33,11 @@ class Vehicle {
       // Food weight: Currently same weight is used on all foods.
       this.dna[0] = 1;
       // Super food perception <-> Normal food perception.
-      this.dna[2] = 1;
+      this.dna[1] = 1;
       // Speed <-> Digestion:
-      this.dna[4] = random(0.75, 1.25);
+      this.dna[2] = random(0.75, 1.25);
       // Health <-> Handling:
-      this.dna[5] = random(0.75, 1.25);
+      this.dna[3] = random(0.75, 1.25);
 
     } else {
       // Inherrit and mutate.
@@ -46,33 +46,33 @@ class Vehicle {
         this.dna[0] += random(-0.1, 0.1);
       }
 
+      this.dna[1] = dna[1];
+      if (random(1) < mr) {
+        this.dna[1] *= random(0.75, 1.25);
+      }
+      //Mutating in the direction of either maxspeed or energyDrain!
       this.dna[2] = dna[2];
       if (random(1) < mr) {
         this.dna[2] *= random(0.75, 1.25);
       }
-      //Mutating in the direction of either maxspeed or energyDrain!
-      this.dna[4] = dna[4];
-      if (random(1) < mr) {
-        this.dna[4] *= random(0.75, 1.25);
-      }
       //Mutating in the direction of either health or handling(maxforce)!
-      this.dna[5] = dna[5];
+      this.dna[3] = dna[3];
       if (random(1) < mr) {
-        this.dna[5] *= random(0.95, 1.05);
+        this.dna[3] *= random(0.95, 1.05);
       }
     }
   //DNA's modifies the values based on DNA inside the constructor.
     // Speed <-> digestion:
-    this.maxspeed = (this.maxspeed * this.dna[4]);
-    this.digestion = this.digestion * this.dna[4]*digestionWeight; // digestionWeight = % penalty for DNA[4].
+    this.maxspeed = (this.maxspeed * this.dna[2]);
+    this.digestion = this.digestion * this.dna[2]*digestionWeight; // digestionWeight = % penalty for dna[2].
 
     // Health <-> Handling:
-    this.maxhealth = 100 * this.dna[5];
+    this.maxhealth = 100 * this.dna[3];
     this.health = (this.maxhealth / 2);
-    this.maxforce = this.maxforce / this.dna[5];
+    this.maxforce = this.maxforce / this.dna[3];
 
     // image assignment:
-    if(this.dna[2] <= 0.5) {
+    if(this.dna[1] <= 0.5) {
       this.img = imgDwellerSand;
 
       if(this.maxspeed > 3) {
@@ -80,13 +80,13 @@ class Vehicle {
         this.size = 25;
       }
 
-    if (this.dna[2] <= 0.3 && this.maxspeed < 3) {
+    if (this.dna[1] <= 0.3 && this.maxspeed < 3) {
         this.img = imgNomadSand;
         this.size = 35;
       }
     }
 
-    if (this.dna[2] >= 1.5) {
+    if (this.dna[1] >= 1.5) {
       this.img = imgDweller;
       this.size = 25;
 
@@ -95,7 +95,7 @@ class Vehicle {
           this.size = 25;
       }
 
-    if (this.dna[2] >= 1.7 && this.maxspeed < 3) {
+    if (this.dna[1] >= 1.7 && this.maxspeed < 3) {
       this.img = imgNomad;
       this.size = 35;
       }
@@ -106,28 +106,28 @@ class Vehicle {
 
   getType(){
     var type;
-    if(this.dna[2] <= 0.5 && this.dna[2]>=0.3) {
+    if(this.dna[1] <= 0.5 && this.dna[1]>=0.3) {
 
       return "dwellerSand"
       }
 
-    if(this.maxspeed > 3 && this.dna[2]<=0.5) {
+    if(this.maxspeed > 3 && this.dna[1]<=0.5) {
       return "flySand";
       }
 
-    if (this.dna[2] <= 0.3 && this.maxspeed < 3) {
+    if (this.dna[1] <= 0.3 && this.maxspeed < 3) {
       return "nomadSand";
       }
 
-    if (this.dna[2] >= 1.5 && this.dna[2] <=1.7) {
+    if (this.dna[1] >= 1.5 && this.dna[1] <=1.7) {
       return "dweller";
       }
 
-    if(this.maxspeed > 3 && this.dna[2]>=1.5) {
+    if(this.maxspeed > 3 && this.dna[1]>=1.5) {
       return "fly";
       }
 
-    if (this.dna[2] >= 1.7 && this.maxspeed < 3) {
+    if (this.dna[1] >= 1.7 && this.maxspeed < 3) {
       return "nomad"
       }
 };
@@ -149,9 +149,9 @@ class Vehicle {
   };
 
   behaviors(grasslands, mountains, jungle) {
-    var steerG = this.eat(grasslands, 20, 50 * this.dna[2]); // 20 = energy gained from grasslands food.
-    var steerB = this.eat(mountains, 100, 50 / this.dna[2]); // 100 = energy gained from super food.
-    var steerJ = this.eat(jungle, 20, 50 * this.dna[2]);    // 20 = energy gained from junglefood
+    var steerG = this.eat(grasslands, 20, 50 * this.dna[1]); // 20 = energy gained from grasslands food.
+    var steerB = this.eat(mountains, 100, 50 / this.dna[1]); // 100 = energy gained from super food.
+    var steerJ = this.eat(jungle, 20, 50 * this.dna[1]);    // 20 = energy gained from junglefood
 
     steerG.mult(this.dna[0]);
     steerB.mult(this.dna[0]);
@@ -265,21 +265,20 @@ class Vehicle {
     // Exception of boundaries while creatures are on "the path" to other biomes.
     if(this.position.y < pathUpper || this.position.y > pathLower) {
 
-    // River boundaries START:
+    // River boundaries:
     if (this.position.x < riverR && this.position.x > riverM) {
       desired = createVector(this.maxspeed, this.velocity.y);
     } else if (this.position.x > riverL && this.position.x < riverM) {
       desired = createVector(-this.maxspeed, this.velocity.y);
     }
 
-    // Mountain boundaries Start:
+    // Mountain boundaries:
     if (this.position.x < mountR && this.position.x > mountM) {
       desired = createVector(this.maxspeed, this.velocity.y);
     } else if (this.position.x > mountL && this.position.x < mountM) {
       desired = createVector(-this.maxspeed, this.velocity.y);
     }
   }
-    // Steering???? Idle maybe?
     if (desired !== null) {
       desired.normalize();
       desired.mult(this.maxspeed);
